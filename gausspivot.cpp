@@ -34,6 +34,46 @@ vector<double> gaussElimination(vector<vector<double>> a,vector<double>b){
     }
     return x;
 }
+
+//another use is to get the inverse using the gauss jordan method form a A|I and turn a into identity using the pivot method and the other turns to A^-1
+void gaussJordanInverse(vector<vector<double>>& A) {
+    int n = A.size();
+
+    // Augment A with the identity matrix
+    vector<vector<double>> augmented(n, vector<double>(2 * n));
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            augmented[i][j] = A[i][j];
+
+    for (int i = 0; i < n; ++i)
+        augmented[i][i + n] = 1;
+
+    // Gauss-Jordan Elimination
+    for (int col = 0; col < n; ++col) {
+        
+        double diag = augmented[col][col];
+        for (int j = 0; j < 2 * n; ++j)
+            augmented[col][j] /= diag;
+
+        // Make all other elements in this column 0
+        for (int row = 0; row < n; ++row) {
+            if (row != col) {
+                double factor = augmented[row][col];
+                for (int j = 0; j < 2 * n; ++j)
+                    augmented[row][j] -= factor * augmented[col][j];
+            }
+        }
+    }
+
+    
+    cout << "Inverse:\n";
+    for (int i = 0; i < n; ++i) {
+        for (int j = n; j < 2 * n; ++j)
+            cout << setw(10) << fixed << setprecision(5) << augmented[i][j] << " ";
+        cout << endl;
+    }
+}
+
 int main()
 {
     vector<vector<double>> A = {
@@ -50,5 +90,7 @@ int main()
     for (int i = 0; i < result.size(); ++i) {
         cout << "x" << i + 1 << " = " << result[i] << endl;
     }
+    gaussJordanInverse(A);
+
     return 0;
 }
